@@ -1,24 +1,20 @@
-# def remove_duplicates(nums)
-#   k = 0
+def remove_duplicates(nums)
+  return nums.length if nums.length <= 2
+  k = 2
 
-#   (1...nums.length).each do |moving_p|
-#     if nums[k] != nums[moving_p]
-#       k += 1
-#       nums[k] = nums[moving_p]
-#     end
-#   end
-#   p(nums)
-#   return k + 1
-# end
+  (2...nums.length).each do |j|
+    if nums[j] != nums[k - 2]
+      nums[k] = nums[j]
+      k += 1
+    end
+  end
+  return k
+end
 
-# m = [1,1,1,2,2,3]
-# n = [0,0,1,1,1,1,2,3,3]
-
-# print(remove_duplicates(m))
+print(remove_duplicates(n))
 
 # remove some duplciates such that each unique element appears at MOST TWICE
 # don't change the order
-
 
 # Input: nums = [1,1,1,2,2,3]
 # Output: 5, nums = [1,1,2,2,3,_]
@@ -26,5 +22,3 @@
 
 # Input: nums = [0,0,1,1,1,1,2,3,3]
 # Output: 7, nums = [0,0,1,1,2,3,3,_,_]
-
-print((0...4).count)
