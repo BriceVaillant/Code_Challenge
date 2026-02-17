@@ -2,7 +2,7 @@
 #   if k >= nums.length
 #     k = k % nums.length
 #   end
-  
+
 #   j = nums.pop(k)
 #   nums.unshift(j).flatten!
 #   return nums
@@ -21,15 +21,15 @@ def reverse!(nums, start_index, end_index)
     end_index -= 1
   end
 end
+
 def rotate(nums, k)
   n = nums.length
   k %= n
-  
-  reverse!(nums, 0, n-1) # reverse the whole array
-  reverse!(nums, 0, k-1) # reverse the first k elements
-  reverse!(nums, k, n-1) # reverse the remaining n-k elements
-end
 
+  reverse!(nums, 0, n - 1) # reverse the whole array
+  reverse!(nums, 0, k - 1) # reverse the first k elements
+  reverse!(nums, k, n - 1) # reverse the remaining n-k elements
+end
 
 nums1 = [1, 2, 3, 4, 5, 6, 7]
 k1 = 3
