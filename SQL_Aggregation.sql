@@ -243,3 +243,56 @@ select name, (agg.initialoutlay / ((revenue / 3) - agg.monthlymaintenance)) as m
 		group by facs.name, facs.initialoutlay, facs.monthlymaintenance
 	) as agg
 order by name; 
+
+
+
+-- Calculate a rolling average of total revenue
+-- this here is a more complex query that calculates the rolling average of total revenue for each day in August 2012, by joining the bookings table with a calendar table that contains all the days in August, and then using a case statement to calculate the revenue for each booking based on whether it was made by a member or a guest, and then dividing the total revenue by 15 to get the average revenue per day.
+-- the left join is used to include all the days in the calendar, even if there are no bookings for that day, and the group by is used to group the results by day, and then order by day to get the results in chronological order.
+
+WITH calendar AS (
+    SELECT generate_series('2012-08-01'::date, '2012-08-31'::date, '1 day')::date AS day
+)							  
+SELECT 
+    c.day,
+    (SUM(
+	CASE 
+		WHEN bks.memid = 0 THEN bks.slots * fac.guestcost
+		ELSE bks.slots * fac.membercost
+		end
+	) / 15) as revenue
+FROM calendar c
+LEFT JOIN cd.bookings bks
+  ON bks.starttime >= (c.day - interval '14 days') 
+  AND bks.starttime < (c.day + interval '1 day')
+LEFT JOIN cd.facilities fac
+on bks.facid = fac.facid
+group by c.day
+order by c.day
+
+-- alternative way to calculate a rolling average of total revenue, by using a correlated subquery that calculates the average revenue for the last 15 days for each day in August, and then dividing the total revenue by 15 to get the average revenue per day.
+
+select 	dategen.date,
+	-- correlated subquery that, for each day fed into it,
+	-- finds the average revenue for the last 15 days
+	(
+		
+		select sum(case
+			when memid = 0 then slots * facs.guestcost
+			else slots * membercost
+		end) as rev
+
+		from cd.bookings bks
+		inner join cd.facilities facs
+			on bks.facid = facs.facid
+		where bks.starttime > dategen.date - interval '14 days'
+			and bks.starttime < dategen.date + interval '1 day'
+	)/15 as revenue
+	from
+	-- generates a list of days in august
+	(
+		
+		select 	cast(generate_series(timestamp '2012-08-01',
+			'2012-08-31','1 day') as date) as date
+	)  as dategen
+order by dategen.date; 
