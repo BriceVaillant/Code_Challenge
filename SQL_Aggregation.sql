@@ -296,3 +296,23 @@ select 	dategen.date,
 			'2012-08-31','1 day') as date) as date
 	)  as dategen
 order by dategen.date; 
+
+
+
+-- Calculate the average processing time for each machine
+-- here we are calculating the average processing time for each machine by joining the activity table with itself to get the start and end times for each process, 
+-- and then calculating the difference between the end time and the start time to get the processing time for each process, 
+-- and then averaging the processing times for each machine to get the average processing time for each machine.
+
+with start_process as (
+    SELECT machine_id, process_id, timestamp from activity where activity_type = 'start' group by process_id, machine_id
+), end_process as 
+(
+    SELECT machine_id, process_id, timestamp from activity where activity_type = 'end' group by process_id, machine_id
+)
+SELECT sp.machine_id, round(AVG(ep.timestamp - sp.timestamp), 3) as processing_time
+from start_process sp 
+INNER JOIN end_process ep
+ON ep.machine_id = sp.machine_id
+and ep.process_id = sp.process_id
+group by sp.machine_id
