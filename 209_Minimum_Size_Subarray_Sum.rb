@@ -1,3 +1,8 @@
+# Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray whose sum is greater than or equal to target. 
+# If there is no such subarray, return 0 instead.
+
+
+
 def min_sub_array_len(target, nums)
     return 1 if nums[0] >= target
     return 0 if nums.length <= 1
@@ -69,7 +74,7 @@ puts min_sub_array_len(target, nums) # 0
 #       # While the window is valid, try to shrink it from the left
 #       while current_sum >= target
 #         size = k - n + 1
-#         result = [result, size].min
+#         result = [result, size].min # Update result if this window is smaller
         
 #         current_sum -= nums[n]
 #         n += 1
